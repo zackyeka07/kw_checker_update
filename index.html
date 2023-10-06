@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KW CHECKER INDEX 1.0</title>
+    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="splash-container">
+        <div class="logo">
+            <img class="img-fluid" src="./assets/logo.svg" alt="">
+        </div>
+        <div class="text mt-4">
+            <span>KW CHECKER INDEX 1.0</span>
+        </div>
+        <p id="dev">By Alsav System</p>
+    </div>
+    <div class="main hidden">
+        <div id="nav" class="px-4 sticky-top py-2 bg-primary">
+            <div class=" d-flex gap-3 align-items-center">
+                <img style="width: 15px; height: 100%;" class="img-fluid" src="./assets/logos.png" alt="">
+                <span style="font-size: 14px;" class="text-white">Kw Checker Index 1.0</span>
+            </div>
+        </div>
+    <div>
+        <div id="app" class=" px-4 py-3">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="mb-3">
+                        <label for="list" class="form-label fw-medium">List Article :</label>
+                        <input class="form-control" accept=".txt,.xlsx,.xlsm,.xlsb,.xltx,.csv" type="file" id="list">
+                    </div>
+
+                    <div class="progress mb-3">
+                        <div id="prog" class="progress-bar progress-bar-striped progress-bar-animated"
+                            role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-3">
+                        <button id="start" class="btn btn-primary">Start</button>
+                        <button id="stop" class="btn btn-danger hidden">Stop</button>
+                        <button type="button" id="export" class="btn btn-success hidden mb-2">Export</button>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="logToggle">
+                            <label class="form-check-label fw-medium" for="logToggle">Show Log</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="headless">
+                            <label class="form-check-label fw-medium" for="headless">Visible Mode</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="logTable">
+                            <label class="form-check-label fw-medium" for="logTable">Show Table</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12">
+                    <div class="mb-4 hidden" id="logTextArea">
+                        <label for="log" class="form-label fw-medium">Log Proccess :</label>
+                        <textarea class="user-select-none form-control user-select-none" id="log" rows="5"
+                            readonly></textarea>
+                    </div>
+
+                    <div id="scrl" class="table-container table-responsive" style="max-height: 250px;">
+                        <table class="table table-bordered hidden" id="data-table">
+                            <thead>
+                                <tr class="table-primary">
+
+                                    <th class="text-center" scope="col">NO.</th>
+                                    <th class="text-center" scope="col">Index ke</th>
+                                    <th class="text-center" scope="col">URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="preload.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
