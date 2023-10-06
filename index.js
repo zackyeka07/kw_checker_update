@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer-extra');
+const { executablePath } = require('puppeteer')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const baseUrl = "https://www.google.com/";
 puppeteer.use(StealthPlugin());
@@ -11,6 +12,7 @@ let browser;
 let stop = false;
 const proccess = async (logToTextarea, logToTable, proggress, list, headless) => {
     browser = await puppeteer.launch({
+        executablePath: executablePath(),
         headless: headless,
         defaultViewport: null,
         args: ["--force-device-scale-factor=0.5"]
@@ -24,12 +26,12 @@ const proccess = async (logToTextarea, logToTable, proggress, list, headless) =>
         waitUntil: 'networkidle2',
         timeout: 120000
     });
-    
+    logToTextarea("[INFO] Membuka google...\n")
+
     const rawKeywords = fs.readFileSync(list, 'utf-8').split('\n');
     for (let i = 0; i < rawKeywords.length; i++) {
-        const item = rawKeywords[i];
-        const [keyword, target] = item.split(':');
-        await searchKeyword(page, keyword.trim(), target.trim(), logToTextarea, logToTable);
+        const data = rawKeywords[i].split(';');
+        await searchKeyword(page, data[0],data[1], logToTextarea, logToTable);
         const progressPercentage = parseInt(((i + 1) / rawKeywords.length) * 100);
         proggress(progressPercentage);
     }
@@ -38,7 +40,8 @@ const proccess = async (logToTextarea, logToTable, proggress, list, headless) =>
 };
 
 async function searchKeyword(page, keyword, targetUrl, logToTextarea, logToTable) {
-    await page.type('textarea[name="q"]', targetUrl, {
+    logToTextarea(keyword,targetUrl);
+    await page.type('textarea[name="q"]', keyword, {
         delay: 100
     });
     
@@ -59,8 +62,7 @@ async function searchKeyword(page, keyword, targetUrl, logToTextarea, logToTable
 
     for (let i = 0; i < searchResults.length; i++) {
         const title = await searchResults[i].evaluate(node => node.getAttribute("href"));
-        if (title === keyword, targetUrl) {
-
+        if (title === targetUrl) {
             results.push({
                 index: i,
                 title
@@ -78,7 +80,7 @@ async function searchKeyword(page, keyword, targetUrl, logToTextarea, logToTable
         logToTable(hasil,search)
     } else {
         logToTextarea("Website tidak ditemukan.");
-        logToTable(targetUrl, "Tidak Ditemukan");
+        logToTable("Tidak Ditemukan", targetUrl);
     }
     
     const cancel = await page.$("[role='button'].M2vV3.vOY7J");

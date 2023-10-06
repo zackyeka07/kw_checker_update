@@ -30,8 +30,8 @@ function createWindow() {
             devTools: !app.isPackaged
         }
     });
-    mainWindow.loadFile('index.html');
-    Menu.setApplicationMenu(null)
+    !app.isPackaged && mainWindow.loadFile('index.html');
+    // Menu.setApplicationMenu(null)
 }
 
 app.whenReady().then(createWindow);

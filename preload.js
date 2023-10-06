@@ -36,6 +36,7 @@ startBtn.addEventListener('click', () => {
         clearLogTable();
         previousReportData = [];
         exportBtn.classList.add('hidden');
+        initNumb = 0;
         ipcRenderer.send('start', list, headless);
     }
 });
@@ -189,5 +190,5 @@ window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         document.querySelector('.splash-container').classList.add('hidden');
         document.querySelector('.main').classList.remove('hidden');
-    }, 5000);
+    }, 2000);
 });
