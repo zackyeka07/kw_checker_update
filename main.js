@@ -31,7 +31,7 @@ function createWindow() {
         }
     });
     mainWindow.loadFile('index.html');
-    // Menu.setApplicationMenu(null) hidupkan ketika sudah mau di build
+    Menu.setApplicationMenu(null)
 }
 
 app.whenReady().then(createWindow);
