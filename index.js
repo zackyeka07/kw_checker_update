@@ -64,7 +64,7 @@ async function searchKeyword(page, keyword, targetUrl, logToTextarea, logToTable
         const title = await searchResults[i].evaluate(node => node.getAttribute("href"));
         if (title === targetUrl) {
             results.push({
-                index: i,
+                index: i + 1,
                 title
             });
             break;
