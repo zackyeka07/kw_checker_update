@@ -1,10 +1,14 @@
 const puppeteer = require('puppeteer-extra');
-const { executablePath } = require('puppeteer')
+const {
+    executablePath
+} = require('puppeteer')
 const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 const baseUrl = "https://www.google.com/";
 puppeteer.use(StealthPlugin());
 const fs = require('fs');
-const { title } = require('process');
+const {
+    title
+} = require('process');
 
 let page;
 let browser;
@@ -17,10 +21,10 @@ const proccess = async (logToTextarea, logToTable, proggress, list, headless) =>
         defaultViewport: null,
         args: ["--force-device-scale-factor=0.5"]
     });
-    
+
     const context = browser.defaultBrowserContext();
     await context.overridePermissions('https://www.google.com/', ["geolocation", "notifications"]);
-    
+
     page = await browser.newPage();
     await page.goto(baseUrl, {
         waitUntil: 'networkidle2',
@@ -31,7 +35,7 @@ const proccess = async (logToTextarea, logToTable, proggress, list, headless) =>
     const rawKeywords = fs.readFileSync(list, 'utf-8').split('\n');
     for (let i = 0; i < rawKeywords.length; i++) {
         const data = rawKeywords[i].split(';');
-        await searchKeyword(page, data[0],data[1], logToTextarea, logToTable);
+        await searchKeyword(page, data[0], data[1], logToTextarea, logToTable);
         const progressPercentage = parseInt(((i + 1) / rawKeywords.length) * 100);
         proggress(progressPercentage);
     }
@@ -40,11 +44,11 @@ const proccess = async (logToTextarea, logToTable, proggress, list, headless) =>
 };
 
 async function searchKeyword(page, keyword, targetUrl, logToTextarea, logToTable) {
-    logToTextarea(keyword,targetUrl);
+    logToTextarea(keyword, targetUrl);
     await page.type('textarea[name="q"]', keyword, {
         delay: 100
     });
-    
+
     await Promise.all([
         page.keyboard.press("Enter"),
         page.waitForNavigation({
@@ -54,8 +58,9 @@ async function searchKeyword(page, keyword, targetUrl, logToTextarea, logToTable
     ]);
 
     await scrollDownToBottom(page);
-    
+
     const results = [];
+    await page.waitForSelector('[jsname="UWckNb"]');
     const searchResults = await page.$$('[jsname="UWckNb"]');
     logToTextarea("Search : " + targetUrl)
     logToTextarea("Panjang Baris : " + searchResults.length);
@@ -72,20 +77,23 @@ async function searchKeyword(page, keyword, targetUrl, logToTextarea, logToTable
     }
 
     if (results.length > 0) {
-        logToTextarea(`Website diindex ke : ${results[0].index}`);
+        logToTextarea(`Website diindex ke : ${results[0].index}\n`);
         logToTextarea(`Url : ${results[0].title}\n`);
-        logToTable(results[0].index,results[0].title);
+        logToTable(results[0].index, results[0].title);
         const hasil = results[0].index
         const search = results[0].title
-        logToTable(hasil,search)
+        logToTable(hasil, search)
     } else {
-        logToTextarea("Website tidak ditemukan.");
+        logToTextarea("Website tidak ditemukan.\n");
         logToTable("Tidak Ditemukan", targetUrl);
     }
-    
-    const cancel = await page.$("[role='button'].M2vV3.vOY7J");
-    await cancel.click();
-    await page.waitForTimeout(5000);
+
+    const cancel = await page.waitForSelector("[role='button'].M2vV3.vOY7J");
+    if (cancel) {
+        await cancel.click();
+        await page.waitForTimeout(5000);
+    }
+
 }
 
 async function scrollDownToBottom(page) {
