@@ -61,24 +61,18 @@ async function searchKeyword(page, keyword, targetUrl, logToTextarea, logToTable
 
     const results = [];
     await page.waitForSelector('[jsname="UWckNb"]');
-
     const searchResults = await page.$$('[jsname="UWckNb"]');
-
     logToTextarea("Search : " + targetUrl)
     logToTextarea("Panjang Baris : " + searchResults.length);
 
     for (let i = 0; i < searchResults.length; i++) {
         const title = await searchResults[i].evaluate(node => node.getAttribute("href"));
-        // logToTextarea(`Hasil ${i + 1}: ${title}`);
-        if ((await searchResults[i].evaluate(node => node.getAttribute("href"))) === targetUrl) {
-            // results.push({
-            //     index: i + 1,
-            //     title
-            // });
-            logToTextarea(true)
+        if (title === targetUrl) {
+            results.push({
+                index: i + 1,
+                title
+            });
             break;
-        } else {
-            logToTextarea(false)
         }
     }
 
