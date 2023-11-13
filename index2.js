@@ -66,38 +66,45 @@ async function searchKeyword(page, keyword, target, logToTextarea, logToTable) {
         const searchResults = await page.$$('[data-ved] a');
         logToTextarea("Number of Search Results: " + searchResults.length);
 
-        for (let i = 0; i < searchResults.length; i++) {
-            const href = await searchResults[i].evaluate(node => node.getAttribute("href"));
+        const promises = searchResults.map(async (result, i) => {
+            const href = await result.evaluate(node => node.getAttribute("href"));
             if (href === target) {
                 logToTextarea("Website found at index:", i + 1);
                 logToTextarea('Found the website...✔\n');
 
                 const index = i + 1;
-                const titleElement = await searchResults[i].$eval('h3', node => node.innerText);
+                const titleElement = await result.$eval('h3', node => node.innerText);
                 const title = titleElement.trim();
                 logToTable(index, title);
-                
-                return;
             }
+        });
+
+        await Promise.all(promises);
+
+        if (promises.some(result => result !== undefined)) {
+            return;
         }
 
-        const nextPageButtonWithNumber = await page.$(`[aria-label='Halaman ${currentPage + 1}']`);
-
-        if (nextPageButtonWithNumber) {
-            await nextPageButtonWithNumber.click();
+        // Tombol "Halaman berikutnya"
+        const nextPageButton = await page.$("[aria-label='Halaman berikutnya']");
+        if (nextPageButton) {
+            await nextPageButton.click();
+            logToTextarea("Next page button clicked");
         } else {
-            const nextPageButton = await page.$("[aria-label='Halaman berikutnya']");
-            if (nextPageButton) {
-                await nextPageButton.click();
-                logToTextarea("next page sudah di tekan")
-            } else {
-                logToTextarea("Website not found...❌");
-                logToTextarea("Tidak Ditemukan", target, '\n');
-                break;
-            }
+            logToTable('Not Found', target);
+            logToTextarea("Website not found...❌\n");
+            break;
         }
-        const cancel = await page.waitForSelector("[role='button'].M2vV3.vOY7J");
-        logToTextarea("menekan button silang");
+
+        await page.waitForTimeout(3000);
+
+        // const cancelSelector = "button[aria-label='Tutup']";
+        const cancelSelector = "[role='button'].M2vV3.vOY7J";
+        const cancel = await page.waitForSelector(cancelSelector, {
+            visible: true,
+            timeout: 5000
+        });
+        logToTextarea("Menekan tombol silang");
         if (cancel) {
             await cancel.click();
             await page.waitForTimeout(5000);
@@ -105,7 +112,6 @@ async function searchKeyword(page, keyword, target, logToTextarea, logToTable) {
 
         await page.waitForTimeout(3000);
         currentPage++;
-
     }
 }
 

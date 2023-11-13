@@ -33,6 +33,7 @@ startBtn.addEventListener('click', () => {
         document.getElementById('prog').style.width = '0%';
         const list = fileList.files[0]?.path;
         const headless = toggleView.checked ? false : 'new';
+        console.log(headless);
         clearLogTable();
         previousReportData = [];
         exportBtn.classList.add('hidden');
@@ -121,14 +122,8 @@ ipcRenderer.on("force", () => {
     })
 })
 
-document.addEventListener('change', () => {
-    if (logToggle.checked) {
-        logDiv.classList.remove('hidden');
-        logTextarea.scrollTop = logTextarea.scrollHeight;
-    } else {
-        logDiv.classList.add('hidden');
-    }
-});
+
+
 
 document.addEventListener('change', () => {
     if (logTablle.checked) {
@@ -192,3 +187,18 @@ window.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.main').classList.remove('hidden');
     }, 2000);
 });
+
+function validateInput(input) {
+    input.value = Math.max(1, Math.min(10, input.value));
+}
+
+function validateAndNavigate() {
+    var pageNumberInput = document.getElementById('pageNumber');
+    var pageNumber = pageNumberInput.value;
+    if (pageNumber >= 1 && pageNumber <= 10) {
+        var googleURL = 'https://www.google.com/search?q=' + pageNumber;
+        window.location.href = googleURL;
+    } else {
+
+    }
+}

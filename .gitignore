@@ -1,3 +1,8 @@
 node_modules/
+backup_data/
 dist/
-package.json
+tesaja
+package-lock.json
+murni.js
+index.js
+iya.txt

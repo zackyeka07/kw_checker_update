@@ -8,7 +8,7 @@ const {
 const {
     proccess,
     stopProccess
-} = require("./index");
+} = require("./index2");
 const fs = require('fs');
 
 let mainWindow;
@@ -31,7 +31,6 @@ function createWindow() {
         }
     });
     !app.isPackaged && mainWindow.loadFile('index.html');
-    // Menu.setApplicationMenu(null)
 }
 
 app.whenReady().then(createWindow);
