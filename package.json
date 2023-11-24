@@ -53,13 +53,6 @@
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true
-    },
-    "files" : [
-      "!index.js",
-      "!iya.txt",
-      "!murni.js",
-      "!tes aja/",
-      "!backup_data/"
-    ]
+    }
   }
 }

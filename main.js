@@ -16,7 +16,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 480,
         height: 768,
-        x: 0,
+        x: 880,
         y: 0,
         titleBarStyle: 'hidden',
         titleBarOverlay: {
@@ -30,7 +30,8 @@ function createWindow() {
             devTools: !app.isPackaged
         }
     });
-    !app.isPackaged && mainWindow.loadFile('index.html');
+    mainWindow.loadFile('index.html');
+    app.isPackaged && Menu.setApplicationMenu(null)
 }
 
 app.whenReady().then(createWindow);
@@ -58,12 +59,13 @@ ipcMain.on('start', async (event, list, headless) => {
     };
 
     const logToTable = (search, hasil) => {
-        reports.push({
-            search,
-            hasil
-        });
-        event.sender.send('logToTable', reports);
-    }
+        try {
+            reports.push({ search,hasil });
+            event.sender.send('logToTable', reports);
+        } catch (error) {
+            logToTextarea('Kesalahan di logToTable:', error);
+        }
+    };
 
     const proggress = (pros) => {
         prog.push(pros);

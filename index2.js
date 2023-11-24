@@ -46,7 +46,7 @@ const proccess = async (logToTextarea, logToTable, proggress, list, headless) =>
 
 async function searchKeyword(page, keyword, target, logToTextarea, logToTable) {
     await page.type('textarea[name="q"]', keyword, {
-        delay: 100
+        delay: 10
     });
     logToTextarea(`Typing: ${keyword}...`);
 
@@ -61,58 +61,47 @@ async function searchKeyword(page, keyword, target, logToTextarea, logToTable) {
     await scrollDownToBottom(page);
     let currentPage = 1;
 
-    while (true) {
-        logToTextarea(`Searching for websites on page ${currentPage}...`);
-        const searchResults = await page.$$('[data-ved] a');
-        logToTextarea("Number of Search Results: " + searchResults.length);
+    logToTextarea(`Searching for websites on page ${currentPage}...`);
+    const searchResults = await page.$$('.N54PNb.BToiNc.cvP2Ce');
+    logToTextarea("Number of Search Results: " + searchResults.length + '\n')
 
-        const promises = searchResults.map(async (result, i) => {
-            const href = await result.evaluate(node => node.getAttribute("href"));
-            if (href === target) {
-                logToTextarea("Website found at index:", i + 1);
-                logToTextarea('Found the website...✔\n');
+    let found = false;
 
-                const index = i + 1;
-                const titleElement = await result.$eval('h3', node => node.innerText);
-                const title = titleElement.trim();
-                logToTable(index, title);
-            }
-        });
+    for (let i = 0; i < searchResults.length; i++) {
+        let links = await searchResults[i].$('[jsname="UWckNb"]');
+        const href = await links.evaluate(e => e.getAttribute('href'));
 
-        await Promise.all(promises);
+        if (href == target) {
+            logToTextarea("Website found at index: " + i);
+            logToTextarea('Found the website...✔\n');
 
-        if (promises.some(result => result !== undefined)) {
-            return;
-        }
+            const index = i + 1;
+            const titleElement = await links.$('h3');
+            const title = await titleElement.evaluate(e => e.innerText);
+            logToTable(index, target);
 
-        // Tombol "Halaman berikutnya"
-        const nextPageButton = await page.$("[aria-label='Halaman berikutnya']");
-        if (nextPageButton) {
-            await nextPageButton.click();
-            logToTextarea("Next page button clicked");
-        } else {
-            logToTable('Not Found', target);
-            logToTextarea("Website not found...❌\n");
+            found = true;
             break;
         }
-
-        await page.waitForTimeout(3000);
-
-        // const cancelSelector = "button[aria-label='Tutup']";
-        const cancelSelector = "[role='button'].M2vV3.vOY7J";
-        const cancel = await page.waitForSelector(cancelSelector, {
-            visible: true,
-            timeout: 5000
-        });
-        logToTextarea("Menekan tombol silang");
-        if (cancel) {
-            await cancel.click();
-            await page.waitForTimeout(5000);
-        }
-
-        await page.waitForTimeout(3000);
-        currentPage++;
     }
+
+    if (!found) {
+        logToTextarea('Website not found in search results.\n');
+        logToTable('Not Found', keyword);
+    }
+
+    const cancelSelector = '[role="button"]';
+    const cancel = await page.waitForSelector(cancelSelector, {
+        visible: true,
+        timeout: 5000
+    });
+    logToTextarea("Menekan tombol silang");
+    if (cancel) {
+        await cancel.click();
+        await page.waitForTimeout(5000);
+    }
+
+    await page.waitForTimeout(3000);
 }
 
 async function scrollDownToBottom(page) {

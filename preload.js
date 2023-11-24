@@ -181,12 +181,12 @@ ipcRenderer.on('force', () => {
     exportBtn.classList.remove('hidden');
 });
 
-window.addEventListener('DOMContentLoaded', function() {
+// window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
         document.querySelector('.splash-container').classList.add('hidden');
         document.querySelector('.main').classList.remove('hidden');
     }, 2000);
-});
+// });
 
 function validateInput(input) {
     input.value = Math.max(1, Math.min(10, input.value));
